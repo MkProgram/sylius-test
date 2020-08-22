@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  nginx:
+    build:
+      target: development
+    volumes:
+    - ./app/public:/var/www/app/public:ro
+    ports:
+    - 80:80
+  php:
+    build:
+      target: development
+    environment:
+      XDEBUG_CONFIG: "remote_enable=1 remote_port=9000 remote_host=192.168.178.34"
+      APP_ENV: "dev"
+    volumes:
+      - ./app:/var/www/app
+      - ./app/vendor:/var/www/app/vendor:cached
+  mysql:
+    image: library/mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: toaster
+      MYSQL_USER: sylius
+      MYSQL_PASSWORD: sylius
+      MYSQL_DATABASE: sylius
+    volumes:
+      - mysql:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+    ports:
+    - 8080:80
+volumes:
+  mysql:
